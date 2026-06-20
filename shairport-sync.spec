@@ -28,16 +28,16 @@ BuildRequires:	gcc-c++
 BuildRequires:	pkgconfig(libpulse)
 BuildRequires:	pkgconfig(libpipewire-0.3)
 # airplay2 support
-#Requires:       libavcodec-freeworld
-#Requires:       nqptp
-#BuildRequires:  pkgconfig(uuid)
-#BuildRequires:  pkgconfig(libavformat)
-#BuildRequires:  pkgconfig(libavcodec)
-#BuildRequires:  pkgconfig(libavutil)
-#BuildRequires:  pkgconfig(libgcrypt)
-#BuildRequires:  pkgconfig(libsodium)
-#BuildRequires:  pkgconfig(libplist-2.0)
-#BuildRequires:  xxd
+Requires:       libavcodec-freeworld
+Requires:       nqptp
+BuildRequires:  pkgconfig(uuid)
+BuildRequires:  pkgconfig(libavformat)
+BuildRequires:  pkgconfig(libavcodec)
+BuildRequires:  pkgconfig(libavutil)
+BuildRequires:  pkgconfig(libgcrypt)
+BuildRequires:  pkgconfig(libsodium)
+BuildRequires:  pkgconfig(libplist-2.0)
+BuildRequires:  xxd
 
 %description
 Shairport Sync emulates an AirPort Express for the purpose of streaming audio
@@ -61,8 +61,8 @@ EOF
 autoreconf -i -f
 %configure --sysconfdir=/etc --with-alsa --with-pipe --with-dummy \
            --with-stdout --with-pa --with-metadata --with-pw \
-           --with-soxr --with-avahi --with-systemd --with-ssl=openssl \
-           --with-create-user-group=false # --with-airplay-2
+           --with-soxr --with-avahi --with-systemd-startup --with-ssl=openssl \
+           --with-create-user-group=false  --with-airplay-2
 
 %make_build
 
