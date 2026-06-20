@@ -79,30 +79,25 @@ autoreconf -fi -v
 %make_build
 
 %install
-# Create a dummy intercept folder
+# Create a permanent intercept folder in the build directory
 mkdir -p %{_builddir}/bin-intercept
 
-# Intercept groupadd
 cat > %{_builddir}/bin-intercept/groupadd << 'EOF'
 #!/bin/sh
-echo "Intercepted groupadd for mock environment, skipping safely..."
 exit 0
 EOF
 
-# Intercept useradd (This fixes Error 6!)
 cat > %{_builddir}/bin-intercept/useradd << 'EOF'
 #!/bin/sh
-echo "Intercepted useradd for mock environment, skipping safely..."
 exit 0
 EOF
 
-# Make both intercept scripts executable
 chmod +x %{_builddir}/bin-intercept/groupadd %{_builddir}/bin-intercept/useradd
 
-# Execute the installation with our intercept scripts placed first in the PATH environment
-PATH=%{_builddir}/bin-intercept:$PATH %make_install
+# Force the environment variables directly into the installation macro line
+PATH=%{_builddir}/bin-intercept:$PATH %{make_install} GROUPADD=%{_builddir}/bin-intercept/groupadd USERADD=%{_builddir}/bin-intercept/useradd
 
-# Clean up sample configuration files and establish proper state folders
+# Clean up sample files and establish state folders
 rm -f %{buildroot}%{_sysconfdir}/shairport-sync.conf.sample
 mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
 
