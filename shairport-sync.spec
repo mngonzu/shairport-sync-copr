@@ -79,24 +79,36 @@ autoreconf -fi -v
 %make_build
 
 %install
-# Create a dummy fake groupadd wrapper to intercept the Makefile's host commands
+# Create a dummy intercept folder
 mkdir -p %{_builddir}/bin-intercept
+
+# Intercept groupadd
 cat > %{_builddir}/bin-intercept/groupadd << 'EOF'
 #!/bin/sh
 echo "Intercepted groupadd for mock environment, skipping safely..."
 exit 0
 EOF
-chmod +x %{_builddir}/bin-intercept/groupadd
 
-# Execute installation by adding our fake path first in line
+# Intercept useradd (This fixes Error 6!)
+cat > %{_builddir}/bin-intercept/useradd << 'EOF'
+#!/bin/sh
+echo "Intercepted useradd for mock environment, skipping safely..."
+exit 0
+EOF
+
+# Make both intercept scripts executable
+chmod +x %{_builddir}/bin-intercept/groupadd %{_builddir}/bin-intercept/useradd
+
+# Execute the installation with our intercept scripts placed first in the PATH environment
 PATH=%{_builddir}/bin-intercept:$PATH %make_install
 
-# Clean up sample files and establish state folders
+# Clean up sample configuration files and establish proper state folders
 rm -f %{buildroot}%{_sysconfdir}/shairport-sync.conf.sample
 mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
 
 # Install native system user definition file
 install -m0644 -D shairport-sync.sysusers.conf %{buildroot}%{_sysusersdir}/shairport-sync.conf
+
 %make_install
 rm %{buildroot}/etc/shairport-sync.conf.sample
 mkdir -p %{buildroot}/%{_sharedstatedir}/%{name}
