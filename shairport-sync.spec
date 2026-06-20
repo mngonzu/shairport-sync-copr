@@ -58,13 +58,27 @@ m shairport-sync audio
 EOF
 
 %build
-autoreconf -i -f
-%configure --sysconfdir=/etc --with-alsa --with-pipe --with-dummy \
-           --with-stdout --with-pa --with-metadata --with-pw \
-           --with-soxr --with-avahi --with-systemd-startup --with-ssl=openssl \
-           --with-create-user-group=false  --with-airplay-2
+# Force a clean configuration rewrite from the fresh m4 macros
+autoreconf -fi -v
+
+%configure \
+    --sysconfdir=%{_sysconfdir} \
+    --with-alsa \
+    --with-pipe \
+    --with-dummy \
+    --with-stdout \
+    --with-pa \
+    --with-metadata \
+    --with-pw \
+    --with-soxr \
+    --with-avahi \
+    --with-systemd-startup \
+    --with-ssl=openssl \
+    --with-create-user-group=false \
+    --with-airplay-2
 
 %make_build
+
 
 %install
 %make_install
