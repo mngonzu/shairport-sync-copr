@@ -57,8 +57,11 @@ m shairport-sync audio
 EOF
 
 %build
-# Force a clean configuration rewrite from the fresh m4 macros
 autoreconf -fi -v
+
+# Completely strip the groupadd and useradd command blocks out of the generated Makefiles
+sed -i 's/getent group shairport-sync.*|| groupadd.*/true/g' Makefile Makefile.in scripts/Makefile scripts/Makefile.in
+sed -i 's/getent passwd shairport-sync.*|| useradd.*/true/g' Makefile Makefile.in scripts/Makefile scripts/Makefile.in
 
 %configure \
     --sysconfdir=%{_sysconfdir} \
@@ -78,32 +81,8 @@ autoreconf -fi -v
 
 %make_build
 
+
 %install
-# Create a permanent intercept folder in the build directory
-mkdir -p %{_builddir}/bin-intercept
-
-cat > %{_builddir}/bin-intercept/groupadd << 'EOF'
-#!/bin/sh
-exit 0
-EOF
-
-cat > %{_builddir}/bin-intercept/useradd << 'EOF'
-#!/bin/sh
-exit 0
-EOF
-
-chmod +x %{_builddir}/bin-intercept/groupadd %{_builddir}/bin-intercept/useradd
-
-# Force the environment variables directly into the installation macro line
-PATH=%{_builddir}/bin-intercept:$PATH %{make_install} GROUPADD=%{_builddir}/bin-intercept/groupadd USERADD=%{_builddir}/bin-intercept/useradd
-
-# Clean up sample files and establish state folders
-rm -f %{buildroot}%{_sysconfdir}/shairport-sync.conf.sample
-mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
-
-# Install native system user definition file
-install -m0644 -D shairport-sync.sysusers.conf %{buildroot}%{_sysusersdir}/shairport-sync.conf
-
 %make_install
 rm %{buildroot}/etc/shairport-sync.conf.sample
 mkdir -p %{buildroot}/%{_sharedstatedir}/%{name}
