@@ -49,6 +49,7 @@ install -D -m 0644 nqptp.service %{buildroot}%{_unitdir}/nqptp.service
 %doc README.md
 %{_bindir}/nqptp
 %{_unitdir}/nqptp.service
+%{_mandir}/man8/nqptp.8*
 
 %changelog
 * Sat Jun 20 2026 Your Name <youremail@example.com> - 1.2.4-1
