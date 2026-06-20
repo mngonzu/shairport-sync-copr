@@ -51,7 +51,8 @@ Shairport Sync does not support AirPlay video or photo streaming.
 %prep
 %setup -q
 
-# Create a sysusers.d config file
+sed -i 's/install-exec-hook: install-group-local install-user-local/install-exec-hook:/g' Makefile.am Makefile.in
+
 cat >shairport-sync.sysusers.conf <<EOF
 u shairport-sync - '%{name} User' %{_sharedstatedir}/%{name} -
 m shairport-sync audio
@@ -80,13 +81,11 @@ autoreconf -fi -v
 %make_build
 
 %install
-%make_install install-group-local="" install-user-local=""
-
+%make_install
 rm %{buildroot}/etc/shairport-sync.conf.sample
 mkdir -p %{buildroot}/%{_sharedstatedir}/%{name}
 
 install -m0644 -D shairport-sync.sysusers.conf %{buildroot}%{_sysusersdir}/shairport-sync.conf
-
 
 %post
 %systemd_post %{name}.service
