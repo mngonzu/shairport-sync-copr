@@ -51,7 +51,7 @@ Shairport Sync does not support AirPlay video or photo streaming.
 %prep
 %setup -q
 
-sed -i 's/install-exec-hook: install-group-local install-user-local/install-exec-hook:/g' Makefile.am Makefile.in
+sed -i 's/install-exec-hook: install-group-local install-user-local/install-exec-hook:/g' Makefile.am
 
 cat >shairport-sync.sysusers.conf <<EOF
 u shairport-sync - '%{name} User' %{_sharedstatedir}/%{name} -
