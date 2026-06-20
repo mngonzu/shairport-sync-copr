@@ -51,8 +51,6 @@ Shairport Sync does not support AirPlay video or photo streaming.
 %prep
 %setup -q
 
-sed -i 's/install-exec-hook: install-group-local install-user-local/install-exec-hook:/g' Makefile.am
-
 cat >shairport-sync.sysusers.conf <<EOF
 u shairport-sync - '%{name} User' %{_sharedstatedir}/%{name} -
 m shairport-sync audio
@@ -81,6 +79,24 @@ autoreconf -fi -v
 %make_build
 
 %install
+# Create a dummy fake groupadd wrapper to intercept the Makefile's host commands
+mkdir -p %{_builddir}/bin-intercept
+cat > %{_builddir}/bin-intercept/groupadd << 'EOF'
+#!/bin/sh
+echo "Intercepted groupadd for mock environment, skipping safely..."
+exit 0
+EOF
+chmod +x %{_builddir}/bin-intercept/groupadd
+
+# Execute installation by adding our fake path first in line
+PATH=%{_builddir}/bin-intercept:$PATH %make_install
+
+# Clean up sample files and establish state folders
+rm -f %{buildroot}%{_sysconfdir}/shairport-sync.conf.sample
+mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
+
+# Install native system user definition file
+install -m0644 -D shairport-sync.sysusers.conf %{buildroot}%{_sysusersdir}/shairport-sync.conf
 %make_install
 rm %{buildroot}/etc/shairport-sync.conf.sample
 mkdir -p %{buildroot}/%{_sharedstatedir}/%{name}
