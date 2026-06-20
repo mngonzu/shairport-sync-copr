@@ -79,9 +79,9 @@ autoreconf -fi -v
 
 %make_build
 
-
 %install
-%make_install
+%make_install install-group-local="" install-user-local=""
+
 rm %{buildroot}/etc/shairport-sync.conf.sample
 mkdir -p %{buildroot}/%{_sharedstatedir}/%{name}
 
