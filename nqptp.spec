@@ -1,11 +1,11 @@
 Name:           nqptp
-Version:        1.2.4
+Version:        1.2.8
 Release:        1%{?dist}
 Summary:        Not Quite PTP - A daemon that monitors timing data from PTP clocks
 
 License:        GPL-2.0-only
 URL:            https://github.com/mikebrady/nqptp
-Source0:        https://github.com
+Source0:        https://github.com/mikebrady/%{name}/archive/%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  make
 BuildRequires:  gcc
